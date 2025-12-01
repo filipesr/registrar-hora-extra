@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { OvertimeForm } from '@/components/OvertimeForm';
 import { OvertimeList } from '@/components/OvertimeList';
@@ -19,6 +19,30 @@ export default function Home() {
     month: currentMonth,
     year: currentYear,
   });
+
+  // Carregar nome e CPF do localStorage ao montar o componente
+  useEffect(() => {
+    const savedName = localStorage.getItem('overtime_name');
+    const savedCpf = localStorage.getItem('overtime_cpf');
+
+    if (savedName || savedCpf) {
+      setFormData((prev) => ({
+        ...prev,
+        name: savedName || '',
+        cpf: savedCpf || '',
+      }));
+    }
+  }, []);
+
+  // Salvar nome e CPF no localStorage quando forem alterados
+  useEffect(() => {
+    if (formData.name) {
+      localStorage.setItem('overtime_name', formData.name);
+    }
+    if (formData.cpf) {
+      localStorage.setItem('overtime_cpf', formData.cpf);
+    }
+  }, [formData.name, formData.cpf]);
 
   const [entries, setEntries] = useState<OvertimeEntry[]>([]);
 
