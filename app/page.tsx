@@ -92,9 +92,9 @@ export default function Home() {
 
       <Summary entries={entries} />
 
-      <OvertimeList entries={entries} month={formData.month} year={formData.year} onRemove={handleRemoveEntry} />
+      <OvertimeList entries={entries} month={formData.month} year={formData.year} onRemove={handleRemoveEntry} onClearAll={handleClearAll} />
 
-      <FileActions data={overtimeData} onClearAll={handleClearAll} />
+      <FileActions data={overtimeData} />
 
       <footer className="mt-12 text-center text-sm text-muted-foreground">
         <p>Sistema de Registro de Horas Extras © {currentYear}</p>
