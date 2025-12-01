@@ -7,10 +7,12 @@ import { List } from 'lucide-react';
 
 interface OvertimeListProps {
   entries: OvertimeEntry[];
+  month: number;
+  year: number;
   onRemove: (id: string) => void;
 }
 
-export function OvertimeList({ entries, onRemove }: OvertimeListProps) {
+export function OvertimeList({ entries, month, year, onRemove }: OvertimeListProps) {
   const sortedEntries = [...entries].sort((a, b) => a.day - b.day);
 
   return (
@@ -36,7 +38,7 @@ export function OvertimeList({ entries, onRemove }: OvertimeListProps) {
               <div className="text-right">Ações</div>
             </div>
             {sortedEntries.map((entry) => (
-              <OvertimeItem key={entry.id} entry={entry} onRemove={onRemove} />
+              <OvertimeItem key={entry.id} entry={entry} month={month} year={year} onRemove={onRemove} />
             ))}
           </div>
         )}

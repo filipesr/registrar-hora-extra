@@ -61,3 +61,12 @@ export function isValidTimeFormat(time: string): boolean {
 export function exceedsHourLimit(hours: number, limit: number = 4): boolean {
   return hours > limit;
 }
+
+/**
+ * Retorna a abreviação do dia da semana (seg, ter, qua, qui, sex, sab, dom)
+ */
+export function getDayOfWeek(day: number, month: number, year: number): string {
+  const date = new Date(year, month - 1, day);
+  const weekDays = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
+  return weekDays[date.getDay()];
+}

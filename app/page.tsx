@@ -55,7 +55,7 @@ export default function Home() {
 
       <Summary entries={entries} />
 
-      <OvertimeList entries={entries} onRemove={handleRemoveEntry} />
+      <OvertimeList entries={entries} month={formData.month} year={formData.year} onRemove={handleRemoveEntry} />
 
       <FileActions data={overtimeData} onImport={handleImportData} />
 
