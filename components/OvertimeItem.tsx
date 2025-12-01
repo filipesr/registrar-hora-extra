@@ -34,32 +34,39 @@ export function OvertimeItem({ entry, month, year, onRemove }: OvertimeItemProps
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 p-4 bg-muted/50 rounded-lg hover:bg-muted/80 transition-colors">
-        <div className="flex md:block">
-          <span className="md:hidden font-medium mr-2">Dia:</span>
-          <span className="font-semibold">{entry.day} ({dayOfWeek})</span>
-        </div>
-        <div className="flex md:block">
-          <span className="md:hidden font-medium mr-2">Entrada:</span>
-          <span>{entry.startTime}</span>
-        </div>
-        <div className="flex md:block">
-          <span className="md:hidden font-medium mr-2">Saída:</span>
-          <span>{entry.endTime}</span>
-        </div>
-        <div className="flex md:block">
-          <span className="md:hidden font-medium mr-2">Horas:</span>
-          <span className="font-semibold text-primary">{formatHours(entry.hours)}</span>
-        </div>
-        <div className="flex justify-end">
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => setShowConfirm(true)}
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Remover
-          </Button>
+      <div className="p-2 bg-muted/50 rounded-lg hover:bg-muted/80 transition-colors">
+        <div className="grid grid-cols-2 md:grid-cols-10 gap-2 items-center relative">
+          <div className="flex md:block justify-center">
+            <span className="md:hidden font-medium mr-2">Dia:</span>
+            <span className="font-semibold">{entry.day} ({dayOfWeek})</span>
+          </div>
+          <div className="flex md:block justify-center">
+            <span className="md:hidden font-medium mr-2">Entrada:</span>
+            <span>{entry.startTime}</span>
+          </div>
+          <div className="flex md:block justify-center">
+            <span className="md:hidden font-medium mr-2">Saída:</span>
+            <span>{entry.endTime}</span>
+          </div>
+          <div className="flex md:block justify-center">
+            <span className="md:hidden font-medium mr-2">Horas:</span>
+            <span className="font-semibold text-primary">{formatHours(entry.hours)}</span>
+          </div>
+          <div className="col-span-2 md:col-span-5">
+            <span className='text-sm text-muted-foreground line-clamp-1 text-ellipsis '>
+              {entry.description}
+            </span>
+          </div>
+          <div className="flex justify-end col-span-2 md:col-span-1">
+            <Button
+              variant="destructive"
+              size="sm"
+              className='w-full md:w-auto'
+              onClick={() => setShowConfirm(true)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
 

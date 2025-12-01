@@ -62,11 +62,12 @@ export function OvertimeList({ entries, month, year, onRemove, onClearAll }: Ove
           </div>
         ) : (
           <div className="space-y-2">
-            <div className="hidden md:grid grid-cols-5 gap-4 pb-2 border-b font-medium text-sm text-muted-foreground">
+            <div className="hidden md:grid grid-cols-10 gap-4 pb-2 border-b font-medium text-sm text-muted-foreground">
               <div>Dia</div>
               <div>Hora Entrada</div>
               <div>Hora Saída</div>
               <div>Horas Extras</div>
+              <div className='col-span-5'>Tarefa</div>
               <div className="text-right">Ações</div>
             </div>
             {sortedEntries.map((entry) => (

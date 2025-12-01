@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,10 +25,17 @@ interface OvertimeFormProps {
   existingDays: number[];
 }
 
+// Gerar arrays de horas e minutos
+const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+const minutes = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, '0'));
+
 export function OvertimeForm({ onAdd, existingDays }: OvertimeFormProps) {
-  const [day, setDay] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
+  const [day, setDay] = useState('1');
+  const [startHour, setStartHour] = useState('00');
+  const [startMinute, setStartMinute] = useState('00');
+  const [endHour, setEndHour] = useState('00');
+  const [endMinute, setEndMinute] = useState('00');
+  const [description, setDescription] = useState('');
   const [showAlert, setShowAlert] = useState(false);
   const [pendingEntry, setPendingEntry] = useState<OvertimeEntry | null>(null);
   const [error, setError] = useState('');
@@ -48,28 +56,36 @@ export function OvertimeForm({ onAdd, existingDays }: OvertimeFormProps) {
       return;
     }
 
-    if (!isValidTimeFormat(startTime)) {
-      setError('Formato de hora de entrada inválido (HH:MM)');
+    if (!startHour || !startMinute) {
+      setError('Selecione hora e minuto de entrada');
       return;
     }
 
-    if (!isValidTimeFormat(endTime)) {
-      setError('Formato de hora de saída inválido (HH:MM)');
+    if (!endHour || !endMinute) {
+      setError('Selecione hora e minuto de saída');
       return;
     }
 
-    const hours = calculateOvertimeHours(startTime, endTime);
+    if (!description.trim()) {
+      setError('Descrição da tarefa é obrigatória');
+      return;
+    }
+
+    const startTime = `${startHour}:${startMinute}`;
+    const endTime = `${endHour}:${endMinute}`;
+    const overtimeHours = calculateOvertimeHours(startTime, endTime);
 
     const entry: OvertimeEntry = {
       id: uuidv4(),
       day: dayNum,
       startTime,
       endTime,
-      hours,
+      hours: overtimeHours,
+      description: description.trim(),
     };
 
     // Verifica se excede 4 horas
-    if (exceedsHourLimit(hours)) {
+    if (exceedsHourLimit(overtimeHours)) {
       setPendingEntry(entry);
       setShowAlert(true);
     } else {
@@ -79,10 +95,13 @@ export function OvertimeForm({ onAdd, existingDays }: OvertimeFormProps) {
 
   const addEntry = (entry: OvertimeEntry) => {
     onAdd(entry);
-    setDay('');
-    setStartTime('');
-    setEndTime('');
-    setPendingEntry(null);
+    // setDay('');
+    // setStartHour('');
+    // setStartMinute('');
+    // setEndHour('');
+    // setEndMinute('');
+    // setDescription('');
+    // setPendingEntry(null);
   };
 
   const handleConfirmHighHours = () => {
@@ -113,44 +132,82 @@ export function OvertimeForm({ onAdd, existingDays }: OvertimeFormProps) {
                 <label htmlFor="day" className="text-sm font-medium">
                   Dia
                 </label>
-                <Input
-                  id="day"
-                  type="number"
-                  min="1"
-                  max="31"
-                  placeholder="1-31"
-                  value={day}
-                  onChange={(e) => setDay(e.target.value)}
-                  required
-                />
+                <Select value={day} onValueChange={setDay} required>
+                  <SelectTrigger id="day" className="h-12 text-base">
+                    <SelectValue placeholder="Selecione o dia" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+                      <SelectItem key={d} value={d.toString()}>
+                        {d}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="startTime" className="text-sm font-medium">
                   Hora Entrada
                 </label>
-                <Input
-                  id="startTime"
-                  type="time"
-                  placeholder="HH:MM"
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  required
-                />
+                <div className="flex gap-2">
+                  <Select value={startHour} onValueChange={setStartHour} required>
+                    <SelectTrigger id="startTime" className="h-12 text-base">
+                      <SelectValue placeholder="HH" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {hours.map((h) => (
+                        <SelectItem key={h} value={h}>
+                          {h}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={startMinute} onValueChange={setStartMinute} required>
+                    <SelectTrigger className="h-12 text-base">
+                      <SelectValue placeholder="MM" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {minutes.map((m) => (
+                        <SelectItem key={m} value={m}>
+                          {m}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="endTime" className="text-sm font-medium">
                   Hora Saída
                 </label>
-                <Input
-                  id="endTime"
-                  type="time"
-                  placeholder="HH:MM"
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  required
-                />
+                <div className="flex gap-2">
+                  <Select value={endHour} onValueChange={setEndHour} required>
+                    <SelectTrigger id="endTime" className="h-12 text-base">
+                      <SelectValue placeholder="HH" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {hours.map((h) => (
+                        <SelectItem key={h} value={h}>
+                          {h}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={endMinute} onValueChange={setEndMinute} required>
+                    <SelectTrigger className="h-12 text-base">
+                      <SelectValue placeholder="MM" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {minutes.map((m) => (
+                        <SelectItem key={m} value={m}>
+                          {m}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
 
               <div className="flex items-end">
@@ -159,6 +216,20 @@ export function OvertimeForm({ onAdd, existingDays }: OvertimeFormProps) {
                   Adicionar
                 </Button>
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="description" className="text-sm font-medium">
+                Descrição da Tarefa <span className="text-destructive">*</span>
+              </label>
+              <Textarea
+                id="description"
+                placeholder="Descreva a tarefa realizada durante as horas extras..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                rows={3}
+              />
             </div>
 
             {error && (

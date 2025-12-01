@@ -4,6 +4,7 @@ export interface OvertimeEntry {
   startTime: string; // Formato HH:MM
   endTime: string;   // Formato HH:MM
   hours: number;     // Horas calculadas em decimal
+  description: string; // Descrição da tarefa realizada
 }
 
 export interface OvertimeData {
