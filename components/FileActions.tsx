@@ -6,12 +6,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { OvertimeData } from '@/types/overtime';
 import { exportToJson } from '@/utils/fileHandlers';
 import { Download } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface FileActionsProps {
   data: OvertimeData;
 }
 
 export function FileActions({ data }: FileActionsProps) {
+  const { t } = useLanguage();
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -21,16 +23,16 @@ export function FileActions({ data }: FileActionsProps) {
 
     // Validar campos obrigatórios
     if (!data.name || !data.cpf || data.entries.length === 0) {
-      setError('Preencha nome e CI/CPF e adicione pelo menos um registro para exportar o arquivo');
+      setError(t('fillRequiredFields'));
       return;
     }
 
     try {
       exportToJson(data);
-      setSuccess('Arquivo exportado com sucesso!');
+      setSuccess(t('fileExportedSuccess'));
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
-      setError('Erro ao exportar arquivo');
+      setError(t('exportError'));
     }
   };
 
@@ -44,7 +46,7 @@ export function FileActions({ data }: FileActionsProps) {
           disabled={!data.name || !data.cpf || data.entries.length === 0}
         >
           <Download className="h-4 w-4 mr-2" />
-          Exportar Para Enviar
+          {t('exportToSend')}
         </Button>
 
         {error && (

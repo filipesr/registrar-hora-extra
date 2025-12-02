@@ -16,6 +16,7 @@ import {
 import { OvertimeEntry } from '@/types/overtime';
 import { OvertimeItem } from './OvertimeItem';
 import { List, Trash2 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface OvertimeListProps {
   entries: OvertimeEntry[];
@@ -24,6 +25,7 @@ interface OvertimeListProps {
 }
 
 export function OvertimeList({ entries, onRemove, onClearAll }: OvertimeListProps) {
+  const { t } = useLanguage();
   const sortedEntries = [...entries].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
@@ -39,7 +41,7 @@ export function OvertimeList({ entries, onRemove, onClearAll }: OvertimeListProp
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <List className="h-5 w-5" />
-              Registros
+              {t('records')}
             </CardTitle>
             {entries.length > 0 && (
               <Button
@@ -48,7 +50,7 @@ export function OvertimeList({ entries, onRemove, onClearAll }: OvertimeListProp
                 onClick={() => setShowClearConfirm(true)}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Limpar lista
+                {t('clearList')}
               </Button>
             )}
           </div>
@@ -56,17 +58,17 @@ export function OvertimeList({ entries, onRemove, onClearAll }: OvertimeListProp
       <CardContent>
         {sortedEntries.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
-            Nenhum registro adicionado ainda
+            {t('noRecordsYet')}
           </div>
         ) : (
           <div className="space-y-2">
             <div className="hidden md:grid grid-cols-10 gap-4 pb-2 border-b font-medium text-sm text-muted-foreground">
-              <div className='col-span-2'>Data</div>
-              <div>Entrada</div>
-              <div>Saída</div>
-              <div>Extras</div>
-              <div className='col-span-4'>Tarefa</div>
-              <div className="text-right">Ações</div>
+              <div className='col-span-2'>{t('date')}</div>
+              <div>{t('entry')}</div>
+              <div>{t('exit')}</div>
+              <div>{t('extras')}</div>
+              <div className='col-span-4'>{t('task')}</div>
+              <div className="text-right">{t('actions')}</div>
             </div>
             {sortedEntries.map((entry) => (
               <OvertimeItem key={entry.id} entry={entry} onRemove={onRemove} />
@@ -79,21 +81,21 @@ export function OvertimeList({ entries, onRemove, onClearAll }: OvertimeListProp
     <AlertDialog open={showClearConfirm} onOpenChange={setShowClearConfirm}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Confirmar remoção de todos os registros</AlertDialogTitle>
+          <AlertDialogTitle>{t('confirmRemoveAll')}</AlertDialogTitle>
           <AlertDialogDescription>
-            Tem certeza que deseja remover <strong>TODOS os {entries.length} registros</strong> deste mês?
+            {t('sureToRemoveAll')} <strong>{t('allRecords')} {entries.length} {t('recordsPlural')}</strong>?
             <br />
             <br />
-            Os dados pessoais (nome e CI/CPF) serão mantidos.
+            {t('personalDataKept')}
             <br />
             <br />
-            <strong className="text-destructive">Esta ação não pode ser desfeita.</strong>
+            <strong className="text-destructive">{t('cannotBeUndone')}</strong>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
           <AlertDialogAction onClick={handleClearAll} className="bg-destructive hover:bg-destructive/90">
-            Remover Todos
+            {t('removeAll')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

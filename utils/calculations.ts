@@ -63,12 +63,15 @@ export function exceedsHourLimit(hours: number, limit: number = 4): boolean {
 }
 
 /**
- * Retorna a abreviação do dia da semana (seg, ter, qua, qui, sex, sab, dom)
+ * Retorna a abreviação do dia da semana traduzida
  */
-export function getDayOfWeek(dateString: string): string {
+export function getDayOfWeek(dateString: string, language: 'pt' | 'es' = 'pt'): string {
   const date = new Date(dateString + 'T00:00:00');
-  const weekDays = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
-  return weekDays[date.getDay()];
+  const weekDays = {
+    pt: ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'],
+    es: ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb']
+  };
+  return weekDays[language][date.getDay()];
 }
 
 /**

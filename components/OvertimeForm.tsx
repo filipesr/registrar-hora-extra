@@ -20,6 +20,7 @@ import { OvertimeEntry } from '@/types/overtime';
 import { calculateOvertimeHours, exceedsHourLimit, formatHours } from '@/utils/calculations';
 import { Plus, AlertTriangle } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface OvertimeFormProps {
   onAdd: (entry: OvertimeEntry) => void;
@@ -31,6 +32,7 @@ const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
 const minutes = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, '0'));
 
 export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
+  const { t } = useLanguage();
   const [date, setDate] = useState('');
   const [startHour, setStartHour] = useState('00');
   const [startMinute, setStartMinute] = useState('00');
@@ -47,27 +49,27 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
 
     // Validações
     if (!date) {
-      setError('Selecione a data');
+      setError(t('selectDate'));
       return;
     }
 
     if (existingDates.includes(date)) {
-      setError('Já existe um registro para esta data');
+      setError(t('recordExists'));
       return;
     }
 
     if (!startHour || !startMinute) {
-      setError('Selecione hora e minuto de entrada');
+      setError(t('selectEntryTime'));
       return;
     }
 
     if (!endHour || !endMinute) {
-      setError('Selecione hora e minuto de saída');
+      setError(t('selectExitTime'));
       return;
     }
 
     if (!description.trim()) {
-      setError('Descrição da tarefa é obrigatória');
+      setError(t('taskDescriptionRequired'));
       return;
     }
 
@@ -122,7 +124,7 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Plus className="h-5 w-5" />
-            Adicionar Registro
+            {t('addRecord')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -130,7 +132,7 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="space-y-2">
                 <label htmlFor="date" className="text-sm font-medium">
-                  Data
+                  {t('date')}
                 </label>
                 <Input
                   id="date"
@@ -144,7 +146,7 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
 
               <div className="space-y-2">
                 <label htmlFor="startTime" className="text-sm font-medium">
-                  Hora Entrada
+                  {t('entryTime')}
                 </label>
                 <div className="flex gap-2">
                   <Select value={startHour} onValueChange={setStartHour} required>
@@ -176,7 +178,7 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
 
               <div className="space-y-2">
                 <label htmlFor="endTime" className="text-sm font-medium">
-                  Hora Saída
+                  {t('exitTime')}
                 </label>
                 <div className="flex gap-2">
                   <Select value={endHour} onValueChange={setEndHour} required>
@@ -209,18 +211,18 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
               <div className="flex items-end">
                 <Button type="submit" className="w-full">
                   <Plus className="h-4 w-4 mr-2" />
-                  Adicionar
+                  {t('add')}
                 </Button>
               </div>
             </div>
 
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-medium">
-                Descrição da Tarefa <span className="text-destructive">*</span>
+                {t('taskDescription')} <span className="text-destructive">*</span>
               </label>
               <Textarea
                 id="description"
-                placeholder="Descreva a tarefa realizada durante as horas extras..."
+                placeholder={t('describeTask')}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 required
@@ -242,22 +244,21 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-yellow-600">
               <AlertTriangle className="h-5 w-5" />
-              Atenção: Muitas horas extras
+              {t('attentionHighHours')}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Este registro contém <strong>{pendingEntry && formatHours(pendingEntry.hours)}</strong> de
-              horas extras, o que excede o limite recomendado de 4 horas.
+              {t('recordContains')} <strong>{pendingEntry && formatHours(pendingEntry.hours)}</strong> {t('ofOvertime')}
               <br />
               <br />
-              Deseja confirmar este registro?
+              {t('confirmRecord')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={handleCancelHighHours}>
-              Cancelar
+              {t('cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmHighHours}>
-              Confirmar
+              {t('confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

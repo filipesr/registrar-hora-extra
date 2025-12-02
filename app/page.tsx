@@ -7,8 +7,10 @@ import { OvertimeList } from '@/components/OvertimeList';
 import { Summary } from '@/components/Summary';
 import { FileActions } from '@/components/FileActions';
 import { OvertimeData, OvertimeEntry, FormData } from '@/types/overtime';
+import { LanguageProvider, useLanguage } from '@/contexts/LanguageContext';
 
-export default function Home() {
+function HomeContent() {
+  const { t } = useLanguage();
   const [formData, setFormData] = useState<FormData>({
     name: '',
     cpf: '',
@@ -91,8 +93,16 @@ export default function Home() {
       <FileActions data={overtimeData} />
 
       <footer className="mt-12 text-center text-sm text-muted-foreground">
-        <p>Sistema de Registro de Horas Extras © {new Date().getFullYear()}</p>
+        <p>{t('systemCopyright')} {new Date().getFullYear()}</p>
       </footer>
     </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <LanguageProvider>
+      <HomeContent />
+    </LanguageProvider>
   );
 }

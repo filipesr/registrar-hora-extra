@@ -15,6 +15,7 @@ import {
 import { OvertimeEntry } from '@/types/overtime';
 import { formatHours, getDayOfWeek, formatDate } from '@/utils/calculations';
 import { Trash2 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface OvertimeItemProps {
   entry: OvertimeEntry;
@@ -22,7 +23,8 @@ interface OvertimeItemProps {
 }
 
 export function OvertimeItem({ entry, onRemove }: OvertimeItemProps) {
-  const dayOfWeek = getDayOfWeek(entry.date);
+  const { t, language } = useLanguage();
+  const dayOfWeek = getDayOfWeek(entry.date, language);
   const formattedDate = formatDate(entry.date);
   const [showConfirm, setShowConfirm] = useState(false);
 
@@ -72,16 +74,16 @@ export function OvertimeItem({ entry, onRemove }: OvertimeItemProps) {
       <AlertDialog open={showConfirm} onOpenChange={setShowConfirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmar remoção</AlertDialogTitle>
+            <AlertDialogTitle>{t('confirmRemoval')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja remover o registro do dia <strong>{formattedDate}</strong>?
+              {t('sureToRemove')} <strong>{formattedDate}</strong>?
               <br />
-              Esta ação não pode ser desfeita.
+              {t('cannotBeUndone')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleRemove}>Remover</AlertDialogAction>
+            <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={handleRemove}>{t('remove')}</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
