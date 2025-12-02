@@ -10,18 +10,15 @@ export function generateFileName(data: OvertimeData): string {
     .replace(/[\u0300-\u036f]/g, '') // Remove acentos
     .replace(/[^a-z0-9]/g, '_');
 
-  // Se houver registros, pega a primeira e última data
+  // Se houver registros, extrai ano e mês do primeiro registro
   if (data.entries.length > 0) {
     const sortedDates = [...data.entries].sort((a, b) =>
       new Date(a.date).getTime() - new Date(b.date).getTime()
     );
-    const firstDate = sortedDates[0].date.replace(/-/g, '_');
-    const lastDate = sortedDates[sortedDates.length - 1].date.replace(/-/g, '_');
+    const firstDate = sortedDates[0].date; // formato YYYY-MM-DD
+    const [year, month] = firstDate.split('-');
 
-    if (firstDate === lastDate) {
-      return `${firstDate}_${sanitizedName}.json`;
-    }
-    return `${firstDate}_a_${lastDate}_${sanitizedName}.json`;
+    return `${year}_${month}_${sanitizedName}.json`;
   }
 
   return `${sanitizedName}_horas_extras.json`;
