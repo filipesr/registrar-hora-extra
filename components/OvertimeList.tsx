@@ -19,14 +19,12 @@ import { List, Trash2 } from 'lucide-react';
 
 interface OvertimeListProps {
   entries: OvertimeEntry[];
-  month: number;
-  year: number;
   onRemove: (id: string) => void;
   onClearAll: () => void;
 }
 
-export function OvertimeList({ entries, month, year, onRemove, onClearAll }: OvertimeListProps) {
-  const sortedEntries = [...entries].sort((a, b) => a.day - b.day);
+export function OvertimeList({ entries, onRemove, onClearAll }: OvertimeListProps) {
+  const sortedEntries = [...entries].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   const handleClearAll = () => {
@@ -41,7 +39,7 @@ export function OvertimeList({ entries, month, year, onRemove, onClearAll }: Ove
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
               <List className="h-5 w-5" />
-              Registros do Mês
+              Registros
             </CardTitle>
             {entries.length > 0 && (
               <Button
@@ -50,7 +48,7 @@ export function OvertimeList({ entries, month, year, onRemove, onClearAll }: Ove
                 onClick={() => setShowClearConfirm(true)}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Remover Todos
+                Limpar lista
               </Button>
             )}
           </div>
@@ -63,15 +61,15 @@ export function OvertimeList({ entries, month, year, onRemove, onClearAll }: Ove
         ) : (
           <div className="space-y-2">
             <div className="hidden md:grid grid-cols-10 gap-4 pb-2 border-b font-medium text-sm text-muted-foreground">
-              <div>Dia</div>
-              <div>Hora Entrada</div>
-              <div>Hora Saída</div>
-              <div>Horas Extras</div>
-              <div className='col-span-5'>Tarefa</div>
+              <div className='col-span-2'>Data</div>
+              <div>Entrada</div>
+              <div>Saída</div>
+              <div>Extras</div>
+              <div className='col-span-4'>Tarefa</div>
               <div className="text-right">Ações</div>
             </div>
             {sortedEntries.map((entry) => (
-              <OvertimeItem key={entry.id} entry={entry} month={month} year={year} onRemove={onRemove} />
+              <OvertimeItem key={entry.id} entry={entry} onRemove={onRemove} />
             ))}
           </div>
         )}

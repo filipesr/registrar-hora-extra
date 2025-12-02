@@ -20,8 +20,8 @@ export function FileActions({ data }: FileActionsProps) {
     setSuccess('');
 
     // Validar campos obrigatórios
-    if (!data.name || !data.cpf || !data.month || !data.year || data.entries.length === 0) {
-      setError('Preencha nome, CI/CPF, mês e ano para exportar o arquivo');
+    if (!data.name || !data.cpf || data.entries.length === 0) {
+      setError('Preencha nome e CI/CPF e adicione pelo menos um registro para exportar o arquivo');
       return;
     }
 

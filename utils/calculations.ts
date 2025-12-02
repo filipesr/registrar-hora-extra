@@ -65,8 +65,16 @@ export function exceedsHourLimit(hours: number, limit: number = 4): boolean {
 /**
  * Retorna a abreviação do dia da semana (seg, ter, qua, qui, sex, sab, dom)
  */
-export function getDayOfWeek(day: number, month: number, year: number): string {
-  const date = new Date(year, month - 1, day);
+export function getDayOfWeek(dateString: string): string {
+  const date = new Date(dateString + 'T00:00:00');
   const weekDays = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sab'];
   return weekDays[date.getDay()];
+}
+
+/**
+ * Formata uma data ISO (YYYY-MM-DD) para DD/MM/YYYY
+ */
+export function formatDate(dateString: string): string {
+  const [year, month, day] = dateString.split('-');
+  return `${day}/${month}/${year}`;
 }

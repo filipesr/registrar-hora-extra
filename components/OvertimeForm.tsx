@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
   AlertDialog,
@@ -16,21 +17,21 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { OvertimeEntry } from '@/types/overtime';
-import { calculateOvertimeHours, isValidTimeFormat, exceedsHourLimit, formatHours } from '@/utils/calculations';
+import { calculateOvertimeHours, exceedsHourLimit, formatHours } from '@/utils/calculations';
 import { Plus, AlertTriangle } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface OvertimeFormProps {
   onAdd: (entry: OvertimeEntry) => void;
-  existingDays: number[];
+  existingDates: string[];
 }
 
 // Gerar arrays de horas e minutos
 const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
 const minutes = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, '0'));
 
-export function OvertimeForm({ onAdd, existingDays }: OvertimeFormProps) {
-  const [day, setDay] = useState('1');
+export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
+  const [date, setDate] = useState('');
   const [startHour, setStartHour] = useState('00');
   const [startMinute, setStartMinute] = useState('00');
   const [endHour, setEndHour] = useState('00');
@@ -45,14 +46,13 @@ export function OvertimeForm({ onAdd, existingDays }: OvertimeFormProps) {
     setError('');
 
     // Validações
-    const dayNum = parseInt(day);
-    if (!day || dayNum < 1 || dayNum > 31) {
-      setError('Dia deve estar entre 1 e 31');
+    if (!date) {
+      setError('Selecione a data');
       return;
     }
 
-    if (existingDays.includes(dayNum)) {
-      setError('Já existe um registro para este dia');
+    if (existingDates.includes(date)) {
+      setError('Já existe um registro para esta data');
       return;
     }
 
@@ -77,7 +77,7 @@ export function OvertimeForm({ onAdd, existingDays }: OvertimeFormProps) {
 
     const entry: OvertimeEntry = {
       id: uuidv4(),
-      day: dayNum,
+      date,
       startTime,
       endTime,
       hours: overtimeHours,
@@ -95,7 +95,7 @@ export function OvertimeForm({ onAdd, existingDays }: OvertimeFormProps) {
 
   const addEntry = (entry: OvertimeEntry) => {
     onAdd(entry);
-    // setDay('');
+    // setDate('');
     // setStartHour('');
     // setStartMinute('');
     // setEndHour('');
@@ -129,21 +129,17 @@ export function OvertimeForm({ onAdd, existingDays }: OvertimeFormProps) {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="space-y-2">
-                <label htmlFor="day" className="text-sm font-medium">
-                  Dia
+                <label htmlFor="date" className="text-sm font-medium">
+                  Data
                 </label>
-                <Select value={day} onValueChange={setDay} required>
-                  <SelectTrigger id="day" className="h-12 text-base">
-                    <SelectValue placeholder="Selecione o dia" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-                      <SelectItem key={d} value={d.toString()}>
-                        {d}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Input
+                  id="date"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  required
+                  className="h-12 text-base"
+                />
               </div>
 
               <div className="space-y-2">

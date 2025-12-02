@@ -13,18 +13,17 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { OvertimeEntry } from '@/types/overtime';
-import { formatHours, getDayOfWeek } from '@/utils/calculations';
+import { formatHours, getDayOfWeek, formatDate } from '@/utils/calculations';
 import { Trash2 } from 'lucide-react';
 
 interface OvertimeItemProps {
   entry: OvertimeEntry;
-  month: number;
-  year: number;
   onRemove: (id: string) => void;
 }
 
-export function OvertimeItem({ entry, month, year, onRemove }: OvertimeItemProps) {
-  const dayOfWeek = getDayOfWeek(entry.day, month, year);
+export function OvertimeItem({ entry, onRemove }: OvertimeItemProps) {
+  const dayOfWeek = getDayOfWeek(entry.date);
+  const formattedDate = formatDate(entry.date);
   const [showConfirm, setShowConfirm] = useState(false);
 
   const handleRemove = () => {
@@ -36,9 +35,9 @@ export function OvertimeItem({ entry, month, year, onRemove }: OvertimeItemProps
     <>
       <div className="p-2 bg-muted/50 rounded-lg hover:bg-muted/80 transition-colors">
         <div className="grid grid-cols-2 md:grid-cols-10 gap-2 items-center relative">
-          <div className="flex md:block justify-center">
-            <span className="md:hidden font-medium mr-2">Dia:</span>
-            <span className="font-semibold">{entry.day} ({dayOfWeek})</span>
+          <div className="flex md:block md:col-span-2 justify-center">
+            <span className="md:hidden font-medium mr-2">Data:</span>
+            <span className="font-semibold">{formattedDate} ({dayOfWeek})</span>
           </div>
           <div className="flex md:block justify-center">
             <span className="md:hidden font-medium mr-2">Entrada:</span>
@@ -52,7 +51,7 @@ export function OvertimeItem({ entry, month, year, onRemove }: OvertimeItemProps
             <span className="md:hidden font-medium mr-2">Horas:</span>
             <span className="font-semibold text-primary">{formatHours(entry.hours)}</span>
           </div>
-          <div className="col-span-2 md:col-span-5">
+          <div className="col-span-2 md:col-span-4">
             <span className='text-sm text-muted-foreground line-clamp-1 text-ellipsis '>
               {entry.description}
             </span>
@@ -75,7 +74,7 @@ export function OvertimeItem({ entry, month, year, onRemove }: OvertimeItemProps
           <AlertDialogHeader>
             <AlertDialogTitle>Confirmar remoção</AlertDialogTitle>
             <AlertDialogDescription>
-              Tem certeza que deseja remover o registro do dia <strong>{entry.day}</strong>?
+              Tem certeza que deseja remover o registro do dia <strong>{formattedDate}</strong>?
               <br />
               Esta ação não pode ser desfeita.
             </AlertDialogDescription>

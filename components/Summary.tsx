@@ -17,7 +17,7 @@ export function Summary({ entries }: SummaryProps) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-primary">
           <Clock className="h-6 w-6" />
-          Resumo do Mês
+          Resumo
         </CardTitle>
       </CardHeader>
       <CardContent>

@@ -8,16 +8,10 @@ import { Summary } from '@/components/Summary';
 import { FileActions } from '@/components/FileActions';
 import { OvertimeData, OvertimeEntry, FormData } from '@/types/overtime';
 
-const currentDate = new Date();
-const currentMonth = currentDate.getMonth() + 1;
-const currentYear = currentDate.getFullYear();
-
 export default function Home() {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     cpf: '',
-    month: currentMonth,
-    year: currentYear,
   });
 
   // Carregar nome e CPF do localStorage ao montar o componente
@@ -82,22 +76,22 @@ export default function Home() {
     entries,
   };
 
-  const existingDays = entries.map((entry) => entry.day);
+  const existingDates = entries.map((entry) => entry.date);
 
   return (
     <main className="container mx-auto px-4 py-8 max-w-7xl">
       <Header formData={formData} onChange={setFormData} />
 
-      <OvertimeForm onAdd={handleAddEntry} existingDays={existingDays} />
+      <OvertimeForm onAdd={handleAddEntry} existingDates={existingDates} />
 
       <Summary entries={entries} />
 
-      <OvertimeList entries={entries} month={formData.month} year={formData.year} onRemove={handleRemoveEntry} onClearAll={handleClearAll} />
+      <OvertimeList entries={entries} onRemove={handleRemoveEntry} onClearAll={handleClearAll} />
 
       <FileActions data={overtimeData} />
 
       <footer className="mt-12 text-center text-sm text-muted-foreground">
-        <p>Sistema de Registro de Horas Extras © {currentYear}</p>
+        <p>Sistema de Registro de Horas Extras © {new Date().getFullYear()}</p>
       </footer>
     </main>
   );

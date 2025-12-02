@@ -6,8 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { OvertimeData, OvertimeEntry } from '@/types/overtime';
-import { calculateOvertimeHours, formatHours, getDayOfWeek } from '@/utils/calculations';
-import { Upload, Edit, Printer, Save, Trash2, X, Download } from 'lucide-react';
+import { calculateOvertimeHours, formatHours, getDayOfWeek, formatDate } from '@/utils/calculations';
+import { Upload, Edit, Printer, Save, Trash2, Download } from 'lucide-react';
 
 export default function AdminPage() {
   const [data, setData] = useState<OvertimeData | null>(null);
@@ -48,26 +48,14 @@ export default function AdminPage() {
     setHasChanges(true);
   };
 
-  const updateMonth = (month: string) => {
-    if (!data) return;
-    setData({ ...data, month: parseInt(month) });
-    setHasChanges(true);
-  };
-
-  const updateYear = (year: string) => {
-    if (!data) return;
-    setData({ ...data, year: parseInt(year) });
-    setHasChanges(true);
-  };
-
   const updateEntry = (index: number, field: keyof OvertimeEntry, value: string | number) => {
     if (!data) return;
 
     const updatedEntries = [...data.entries];
     const entry = { ...updatedEntries[index] };
 
-    if (field === 'day') {
-      entry.day = parseInt(value as string);
+    if (field === 'date') {
+      entry.date = value as string;
     } else if (field === 'startTime' || field === 'endTime') {
       entry[field] = value as string;
       // Recalculate hours when time changes
@@ -91,8 +79,7 @@ export default function AdminPage() {
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]/g, '_');
 
-    const monthStr = String(data.month).padStart(2, '0');
-    const filename = `${data.year}_${monthStr}_${sanitizedName}_ajustado.json`;
+    const filename = `${sanitizedName}_horas_extras_ajustado.json`;
 
     const jsonString = JSON.stringify(data, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
@@ -179,34 +166,12 @@ export default function AdminPage() {
           <Card className="print:shadow-none print:border-0">
             <CardHeader>
               <CardTitle className="text-2xl">Relatório de Horas Extras</CardTitle>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-sm">
+              <div className="grid grid-cols-2 gap-4 mt-4 text-sm">
                 <div>
                   <span className="font-semibold">Nome:</span> {data.name}
                 </div>
                 <div>
                   <span className="font-semibold">CPF:</span> {data.cpf}
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">Mês:</span>
-                  <Input
-                    type="number"
-                    value={data.month}
-                    onChange={(e) => updateMonth(e.target.value)}
-                    className="w-16 h-8 print:border-0 print:bg-transparent print:p-0"
-                    min={1}
-                    max={12}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">Ano:</span>
-                  <Input
-                    type="number"
-                    value={data.year}
-                    onChange={(e) => updateYear(e.target.value)}
-                    className="w-20 h-8 print:border-0 print:bg-transparent print:p-0"
-                    min={2000}
-                    max={2100}
-                  />
                 </div>
               </div>
             </CardHeader>
@@ -215,7 +180,7 @@ export default function AdminPage() {
                 <table className="w-full border-collapse">
                   <thead>
                     <tr className="border-b-2 border-primary">
-                      <th className="text-left p-2">Dia</th>
+                      <th className="text-left p-2">Data</th>
                       <th className="text-left p-2">Dia Semana</th>
                       <th className="text-left p-2">Entrada</th>
                       <th className="text-left p-2">Saída</th>
@@ -226,11 +191,23 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {data.entries.map((entry, index) => {
-                      const dayOfWeek = getDayOfWeek(entry.day, data.month, data.year);
+                      const dayOfWeek = getDayOfWeek(entry.date);
+                      const formattedDate = formatDate(entry.date);
                       const isEditingRow = editingRowIndex === index;
                       return (
                         <tr key={entry.id} className="border-b border-muted">
-                          <td className="p-2">{entry.day}</td>
+                          <td className="p-2">
+                            {isEditingRow ? (
+                              <Input
+                                type="date"
+                                value={entry.date}
+                                onChange={(e) => updateEntry(index, 'date', e.target.value)}
+                                className="w-40"
+                              />
+                            ) : (
+                              formattedDate
+                            )}
+                          </td>
                           <td className="p-2">{dayOfWeek}</td>
                           <td className="p-2">
                             {isEditingRow ? (

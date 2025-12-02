@@ -1,24 +1,37 @@
 import { OvertimeData } from '@/types/overtime';
 
 /**
- * Gera o nome do arquivo no formato ano_mes_nome.json
+ * Gera o nome do arquivo baseado no nome e datas dos registros
  */
-export function generateFileName(year: number, month: number, name: string): string {
-  const sanitizedName = name
+export function generateFileName(data: OvertimeData): string {
+  const sanitizedName = data.name
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '') // Remove acentos
     .replace(/[^a-z0-9]/g, '_');
 
-  const monthStr = String(month).padStart(2, '0');
-  return `${year}_${monthStr}_${sanitizedName}.json`;
+  // Se houver registros, pega a primeira e última data
+  if (data.entries.length > 0) {
+    const sortedDates = [...data.entries].sort((a, b) =>
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
+    const firstDate = sortedDates[0].date.replace(/-/g, '_');
+    const lastDate = sortedDates[sortedDates.length - 1].date.replace(/-/g, '_');
+
+    if (firstDate === lastDate) {
+      return `${firstDate}_${sanitizedName}.json`;
+    }
+    return `${firstDate}_a_${lastDate}_${sanitizedName}.json`;
+  }
+
+  return `${sanitizedName}_horas_extras.json`;
 }
 
 /**
  * Exporta dados para arquivo JSON
  */
 export function exportToJson(data: OvertimeData): void {
-  const fileName = generateFileName(data.year, data.month, data.name);
+  const fileName = generateFileName(data);
   const jsonString = JSON.stringify(data, null, 2);
   const blob = new Blob([jsonString], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -45,7 +58,7 @@ export function importFromJson(file: File): Promise<OvertimeData> {
         const data = JSON.parse(content) as OvertimeData;
 
         // Validações básicas
-        if (!data.name || !data.cpf || !data.month || !data.year || !Array.isArray(data.entries)) {
+        if (!data.name || !data.cpf || !Array.isArray(data.entries)) {
           throw new Error('Formato de arquivo inválido');
         }
 
