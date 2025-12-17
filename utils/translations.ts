@@ -69,6 +69,22 @@ export const translations = {
     // Footer
     systemCopyright: 'Sistema de Registro de Horas Extras ©',
 
+    // HelpModal
+    help: 'Ajuda',
+    helpTitle: 'Como Funciona o Sistema',
+    helpDescription: 'Entenda como preencher suas horas extras e exportar o arquivo',
+    helpStep1Title: '1. Preencha seus Dados',
+    helpStep1Content: 'Informe seu nome e CI/CPF nos campos do cabeçalho. Estes dados serão incluídos no arquivo exportado.',
+    helpStep2Title: '2. Registre as Horas',
+    helpStep2Content: 'Para cada dia trabalhado, adicione um registro com a data, hora de início, hora de fim e uma descrição detalhada da tarefa realizada durante as horas extras.',
+    helpStep3Title: '3. Exporte o Arquivo',
+    helpStep3Content: 'Quando terminar de adicionar todos os registros do mês, clique em "Exportar Para Enviar" para baixar um arquivo JSON no formato: ano_mes_nome.json',
+    exportTimingTitle: '📅 Quando Exportar e Enviar?',
+    exportTimingContent: 'Os registros precisam ser exportados e enviados até o último dia do mês. Não é necessário enviar todos os dias - a página salva automaticamente todos os registros do mês. Exporte e envie o arquivo apenas uma vez, no último dia do mês.',
+    descriptionImportanceTitle: '✍️ Importância da Descrição',
+    descriptionImportanceContent: 'A descrição da tarefa é obrigatória e muito importante. Seja claro e específico sobre o trabalho realizado durante as horas extras.',
+    close: 'Fechar',
+
     // Days of week
     sun: 'dom',
     mon: 'seg',
@@ -145,6 +161,22 @@ export const translations = {
 
     // Footer
     systemCopyright: 'Sistema de Registro de Horas Extras ©',
+
+    // HelpModal
+    help: 'Ayuda',
+    helpTitle: 'Cómo Funciona el Sistema',
+    helpDescription: 'Comprenda cómo completar sus horas extras y exportar el archivo',
+    helpStep1Title: '1. Complete sus Datos',
+    helpStep1Content: 'Ingrese su nombre y CI/CPF en los campos del encabezado. Estos datos se incluirán en el archivo exportado.',
+    helpStep2Title: '2. Registre las Horas',
+    helpStep2Content: 'Para cada día trabajado, agregue un registro con la fecha, hora de inicio, hora de fin y una descripción detallada de la tarea realizada durante las horas extras.',
+    helpStep3Title: '3. Exporte el Archivo',
+    helpStep3Content: 'Cuando termine de agregar todos los registros del mes, haga clic en "Exportar Para Enviar" para descargar un archivo JSON en formato: año_mes_nombre.json',
+    exportTimingTitle: '📅 ¿Cuándo Exportar y Enviar?',
+    exportTimingContent: 'Los registros deben exportarse y enviarse hasta el último día del mes. No es necesario enviar todos los días - la página guarda automáticamente todos los registros del mes. Exporte y envíe el archivo solo una vez, el último día del mes.',
+    descriptionImportanceTitle: '✍️ Importancia de la Descripción',
+    descriptionImportanceContent: 'La descripción de la tarea es obligatoria y muy importante. Sea claro y específico sobre el trabajo realizado durante las horas extras.',
+    close: 'Cerrar',
 
     // Days of week
     sun: 'dom',

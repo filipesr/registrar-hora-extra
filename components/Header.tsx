@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { FormData } from '@/types/overtime';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Language } from '@/utils/translations';
+import { HelpModal } from '@/components/HelpModal';
 
 interface HeaderProps {
   formData: FormData;
@@ -35,6 +36,7 @@ export function Header({ formData, onChange }: HeaderProps) {
                 <SelectItem value="es">Español</SelectItem>
               </SelectContent>
             </Select>
+            <HelpModal />
           </div>
         </div>
       </CardHeader>
