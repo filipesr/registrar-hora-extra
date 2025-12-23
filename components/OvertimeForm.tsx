@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { OvertimeEntry } from '@/types/overtime';
 import { calculateOvertimeHours, exceedsHourLimit, formatHours } from '@/utils/calculations';
-import { Plus, AlertTriangle } from 'lucide-react';
+import { Plus, AlertTriangle, Calendar } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -40,6 +40,7 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
   const [endMinute, setEndMinute] = useState('00');
   const [description, setDescription] = useState('');
   const [showAlert, setShowAlert] = useState(false);
+  const [showDuplicateAlert, setShowDuplicateAlert] = useState(false);
   const [pendingEntry, setPendingEntry] = useState<OvertimeEntry | null>(null);
   const [error, setError] = useState('');
 
@@ -50,11 +51,6 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
     // Validações
     if (!date) {
       setError(t('selectDate'));
-      return;
-    }
-
-    if (existingDates.includes(date)) {
-      setError(t('recordExists'));
       return;
     }
 
@@ -86,6 +82,13 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
       description: description.trim(),
     };
 
+    // Verifica se é data duplicada
+    if (existingDates.includes(date)) {
+      setPendingEntry(entry);
+      setShowDuplicateAlert(true);
+      return;
+    }
+
     // Verifica se excede 4 horas
     if (exceedsHourLimit(overtimeHours)) {
       setPendingEntry(entry);
@@ -116,6 +119,24 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
   const handleCancelHighHours = () => {
     setPendingEntry(null);
     setShowAlert(false);
+  };
+
+  const handleConfirmDuplicate = () => {
+    if (pendingEntry) {
+      // Se também excede 4 horas, mostra o alerta de high hours
+      if (exceedsHourLimit(pendingEntry.hours)) {
+        setShowDuplicateAlert(false);
+        setShowAlert(true);
+      } else {
+        addEntry(pendingEntry);
+        setShowDuplicateAlert(false);
+      }
+    }
+  };
+
+  const handleCancelDuplicate = () => {
+    setPendingEntry(null);
+    setShowDuplicateAlert(false);
   };
 
   return (
@@ -258,6 +279,28 @@ export function OvertimeForm({ onAdd, existingDates }: OvertimeFormProps) {
               {t('cancel')}
             </AlertDialogCancel>
             <AlertDialogAction onClick={handleConfirmHighHours}>
+              {t('confirm')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={showDuplicateAlert} onOpenChange={setShowDuplicateAlert}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-blue-600">
+              <Calendar className="h-5 w-5" />
+              {t('duplicateDateTitle')}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('duplicateDateWarning')}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={handleCancelDuplicate}>
+              {t('cancel')}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDuplicate}>
               {t('confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>

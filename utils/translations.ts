@@ -30,6 +30,10 @@ export const translations = {
     cancel: 'Cancelar',
     confirm: 'Confirmar',
 
+    // Alert Dialog (Duplicate Date)
+    duplicateDateTitle: 'Data duplicada',
+    duplicateDateWarning: 'Já existe um registro para esta data. Deseja adicionar outro?',
+
     // OvertimeList
     records: 'Registros',
     clearList: 'Limpar lista',
@@ -122,6 +126,10 @@ export const translations = {
     confirmRecord: '¿Desea confirmar este registro?',
     cancel: 'Cancelar',
     confirm: 'Confirmar',
+
+    // Alert Dialog (Duplicate Date)
+    duplicateDateTitle: 'Fecha duplicada',
+    duplicateDateWarning: 'Ya existe un registro para esta fecha. ¿Desea agregar otro?',
 
     // OvertimeList
     records: 'Registros',
