@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { OvertimeData, OvertimeEntry } from '@/types/overtime';
 import { calculateOvertimeHours, formatHours, getDayOfWeek, formatDate, sortEntriesChronologically } from '@/utils/calculations';
+import { generateFileName } from '@/utils/fileHandlers';
 import { Upload, Edit, Printer, Save, Trash2, Download } from 'lucide-react';
 
 export default function AdminPage() {
@@ -78,14 +79,7 @@ export default function AdminPage() {
       entries: sortEntriesChronologically(data.entries)
     };
 
-    // Sanitize name for filename
-    const sanitizedName = data.name
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]/g, '_');
-
-    const filename = `${sanitizedName}_horas_extras_ajustado.json`;
+    const filename = generateFileName(sortedData, 'ajustado');
 
     const jsonString = JSON.stringify(sortedData, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });

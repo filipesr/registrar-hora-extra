@@ -3,12 +3,14 @@ import { OvertimeData } from '@/types/overtime';
 /**
  * Gera o nome do arquivo baseado no nome e datas dos registros
  */
-export function generateFileName(data: OvertimeData): string {
+export function generateFileName(data: OvertimeData, suffix?: string): string {
   const sanitizedName = data.name
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '') // Remove acentos
     .replace(/[^a-z0-9]/g, '_');
+
+  const suffixPart = suffix ? `_${suffix}` : '';
 
   // Se houver registros, extrai ano e mês do primeiro registro
   if (data.entries.length > 0) {
@@ -18,10 +20,10 @@ export function generateFileName(data: OvertimeData): string {
     const firstDate = sortedDates[0].date; // formato YYYY-MM-DD
     const [year, month] = firstDate.split('-');
 
-    return `${year}_${month}_${sanitizedName}.json`;
+    return `${year}_${month}_${sanitizedName}${suffixPart}.json`;
   }
 
-  return `${sanitizedName}_horas_extras.json`;
+  return `${sanitizedName}_horas_extras${suffixPart}.json`;
 }
 
 /**
