@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { OvertimeData, OvertimeEntry } from '@/types/overtime';
-import { calculateOvertimeHours, formatHours, getDayOfWeek, formatDate } from '@/utils/calculations';
+import { calculateOvertimeHours, formatHours, getDayOfWeek, formatDate, sortEntriesChronologically } from '@/utils/calculations';
 import { Upload, Edit, Printer, Save, Trash2, Download } from 'lucide-react';
 
 export default function AdminPage() {
@@ -72,6 +72,12 @@ export default function AdminPage() {
   const handleSaveAdjustedJSON = () => {
     if (!data) return;
 
+    // Sort entries chronologically before saving
+    const sortedData = {
+      ...data,
+      entries: sortEntriesChronologically(data.entries)
+    };
+
     // Sanitize name for filename
     const sanitizedName = data.name
       .toLowerCase()
@@ -81,7 +87,7 @@ export default function AdminPage() {
 
     const filename = `${sanitizedName}_horas_extras_ajustado.json`;
 
-    const jsonString = JSON.stringify(data, null, 2);
+    const jsonString = JSON.stringify(sortedData, null, 2);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
 
@@ -96,6 +102,7 @@ export default function AdminPage() {
     setHasChanges(false);
   };
 
+  const sortedEntries = data ? sortEntriesChronologically(data.entries) : [];
   const totalHours = data?.entries.reduce((sum, entry) => sum + entry.hours, 0) || 0;
   const averageHours = data?.entries.length ? totalHours / data.entries.length : 0;
 
@@ -190,10 +197,12 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {data.entries.map((entry, index) => {
+                    {sortedEntries.map((entry, sortedIndex) => {
+                      // Find the original index in the unsorted array
+                      const originalIndex = data.entries.findIndex(e => e.id === entry.id);
                       const dayOfWeek = getDayOfWeek(entry.date);
                       const formattedDate = formatDate(entry.date);
-                      const isEditingRow = editingRowIndex === index;
+                      const isEditingRow = editingRowIndex === originalIndex;
                       return (
                         <tr key={entry.id} className="border-b border-muted">
                           <td className="p-2">
@@ -201,7 +210,7 @@ export default function AdminPage() {
                               <Input
                                 type="date"
                                 value={entry.date}
-                                onChange={(e) => updateEntry(index, 'date', e.target.value)}
+                                onChange={(e) => updateEntry(originalIndex, 'date', e.target.value)}
                                 className="w-40"
                               />
                             ) : (
@@ -214,7 +223,7 @@ export default function AdminPage() {
                               <Input
                                 type="time"
                                 value={entry.startTime}
-                                onChange={(e) => updateEntry(index, 'startTime', e.target.value)}
+                                onChange={(e) => updateEntry(originalIndex, 'startTime', e.target.value)}
                                 className="w-24"
                               />
                             ) : (
@@ -226,7 +235,7 @@ export default function AdminPage() {
                               <Input
                                 type="time"
                                 value={entry.endTime}
-                                onChange={(e) => updateEntry(index, 'endTime', e.target.value)}
+                                onChange={(e) => updateEntry(originalIndex, 'endTime', e.target.value)}
                                 className="w-24"
                               />
                             ) : (
@@ -238,7 +247,7 @@ export default function AdminPage() {
                             {isEditingRow ? (
                               <Textarea
                                 value={entry.description}
-                                onChange={(e) => updateEntry(index, 'description', e.target.value)}
+                                onChange={(e) => updateEntry(originalIndex, 'description', e.target.value)}
                                 rows={2}
                                 className="min-w-[300px]"
                               />
@@ -251,14 +260,14 @@ export default function AdminPage() {
                               <Button
                                 size="sm"
                                 variant={isEditingRow ? "default" : "outline"}
-                                onClick={() => toggleRowEdit(index)}
+                                onClick={() => toggleRowEdit(originalIndex)}
                               >
                                 {isEditingRow ? <Save className="h-4 w-4" /> : <Edit className="h-4 w-4" />}
                               </Button>
                               <Button
                                 size="sm"
                                 variant="destructive"
-                                onClick={() => deleteEntry(index)}
+                                onClick={() => deleteEntry(originalIndex)}
                               >
                                 <Trash2 className="h-4 w-4" />
                               </Button>

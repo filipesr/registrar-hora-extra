@@ -17,6 +17,7 @@ import { OvertimeEntry } from '@/types/overtime';
 import { OvertimeItem } from './OvertimeItem';
 import { List, Trash2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { sortEntriesChronologically } from '@/utils/calculations';
 
 interface OvertimeListProps {
   entries: OvertimeEntry[];
@@ -26,7 +27,7 @@ interface OvertimeListProps {
 
 export function OvertimeList({ entries, onRemove, onClearAll }: OvertimeListProps) {
   const { t } = useLanguage();
-  const sortedEntries = [...entries].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const sortedEntries = sortEntriesChronologically(entries);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   const handleClearAll = () => {

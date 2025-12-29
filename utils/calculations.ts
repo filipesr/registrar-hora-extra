@@ -81,3 +81,21 @@ export function formatDate(dateString: string): string {
   const [year, month, day] = dateString.split('-');
   return `${day}/${month}/${year}`;
 }
+
+/**
+ * Ordena entradas de hora extra por data e hora de entrada (cronologicamente)
+ * Primeiro por data (mais antiga primeiro), depois por startTime (mais cedo primeiro)
+ */
+export function sortEntriesChronologically<T extends { date: string; startTime: string }>(entries: T[]): T[] {
+  return [...entries].sort((a, b) => {
+    // Primeiro compara por data
+    const dateComparison = new Date(a.date).getTime() - new Date(b.date).getTime();
+
+    // Se as datas forem iguais, compara por hora de entrada
+    if (dateComparison === 0) {
+      return timeToMinutes(a.startTime) - timeToMinutes(b.startTime);
+    }
+
+    return dateComparison;
+  });
+}
